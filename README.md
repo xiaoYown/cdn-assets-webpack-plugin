@@ -1,4 +1,4 @@
-#### 基本配置
+### 基本配置
 
 ```javascript
 const baseURL = '/static/vue/js/libs';
@@ -24,9 +24,9 @@ new AssetsCDNWebpackPlugin({
 })
 ```
 
-#### 配置等级
+### 配置等级
 
-1. 资源注入优先级:
+#### 1. 资源注入优先级:
 
 - level 1: 模板注释
 ```html
@@ -48,7 +48,7 @@ options = {
 }
 ```
 
-2. 文件路径优先级
+#### 2. 文件路径优先级
 
 - level 1: 使用完整路径
 ```javascript
