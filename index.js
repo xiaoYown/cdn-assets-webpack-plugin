@@ -26,14 +26,14 @@ function injectSlot (html, place) {
   return slot => html.replace(tagEnd, `${slot}\n${tagEnd}`);
 }
 
-function ExternalsPlugin (options = {}) {
+function AssetsCDNWebpackPlugin (options = {}) {
   this.baseURL = options.baseURL || '/';
   this.rename = options.rename || defaultRename;
   this.fullURL = options.fullURL || defaultFullURL;
   this.htmls = options.htmls || {};
 }
  
-ExternalsPlugin.prototype.apply = function (compiler) {
+AssetsCDNWebpackPlugin.prototype.apply = function (compiler) {
   if (compiler.hooks) {
     // webpack 4 support
     compiler.hooks.make.tapAsync(PLUGIN_NAME, (compilation, cb) => {
@@ -41,9 +41,7 @@ ExternalsPlugin.prototype.apply = function (compiler) {
         console.error('HtmlExternalWebpackPlugin must be placed after HtmlWebpackPlugin in `plugins`.');
         return;
       }
-      setTimeout(() => {
-        cb();
-      }, 1000);
+      cb();
       compilation.hooks.htmlWebpackPluginBeforeHtmlProcessing.tapAsync(PLUGIN_NAME, (htmlPluginData, callback) => {
         this.injectTag(this.htmls, htmlPluginData);
         callback(null, htmlPluginData);
@@ -51,14 +49,17 @@ ExternalsPlugin.prototype.apply = function (compiler) {
     });
   } else {
     // webpack 3 support
-    compilation.plugin('html-webpack-plugin-after-emit', (htmlPluginData, callback) => {
-      htmlPluginData.html = this.injectTag(this.htmls, htmlPluginData);
-      callback(null, htmlPluginData);
+    compiler.plugin('compilation', compilation => {
+      compilation.plugin('html-webpack-plugin-before-html-processing', (htmlPluginData, callback) => {
+        htmlPluginData.html = this.injectTag(this.htmls, htmlPluginData);
+        console.log(htmlPluginData.html)
+        callback(null, htmlPluginData);
+      });
     });
   }
 };
 // 注入标签
-ExternalsPlugin.prototype.injectTag = function (htmls, htmlData) {
+AssetsCDNWebpackPlugin.prototype.injectTag = function (htmls, htmlData) {
   let webpackHtmlFilename = htmlData.outputName.replace(/\.html/, '');
   let html = htmls[webpackHtmlFilename] ?
     this.replaceHtml(htmls[webpackHtmlFilename], htmlData)
@@ -66,7 +67,7 @@ ExternalsPlugin.prototype.injectTag = function (htmls, htmlData) {
   htmlData.html = html;
 }
 // 模板替换
-ExternalsPlugin.prototype.replaceHtml = function (fileTypes, htmlData) {
+AssetsCDNWebpackPlugin.prototype.replaceHtml = function (fileTypes, htmlData) {
   let html = htmlData.html;
   let injectPlace = { css: 'header', js: 'footer' };
 
@@ -93,8 +94,8 @@ ExternalsPlugin.prototype.replaceHtml = function (fileTypes, htmlData) {
       // 将 slot 注释替换成标签
       html = html.replace(new RegExp(slotTemplate), tags);
     }
-  })
+  });
   return html;
 }
  
-module.exports = ExternalsPlugin;
+module.exports = AssetsCDNWebpackPlugin;
