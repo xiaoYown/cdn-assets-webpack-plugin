@@ -1,6 +1,6 @@
 {
   "name": "assets-cdn-webpack-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "inject cdn resource into html template",
   "main": "index.js",
   "scripts": {
