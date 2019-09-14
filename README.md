@@ -1,4 +1,4 @@
-> 暂不支持 webpack 3
+> 支持 webpack 3/4
 ### 基本配置
 
 ```javascript

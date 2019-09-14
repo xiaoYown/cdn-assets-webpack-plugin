@@ -51,8 +51,7 @@ AssetsCDNWebpackPlugin.prototype.apply = function (compiler) {
     // webpack 3 support
     compiler.plugin('compilation', compilation => {
       compilation.plugin('html-webpack-plugin-before-html-processing', (htmlPluginData, callback) => {
-        htmlPluginData.html = this.injectTag(this.htmls, htmlPluginData);
-        console.log(htmlPluginData.html)
+        this.injectTag(this.htmls, htmlPluginData);
         callback(null, htmlPluginData);
       });
     });
